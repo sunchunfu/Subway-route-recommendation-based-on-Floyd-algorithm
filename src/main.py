@@ -11,13 +11,16 @@ while True:
         print('请重新输入')
 
 
-while True:
 
-    in_str = input('输入起始站和终点站,换乘意愿(0-5),空格间隔,输入0结束：')
-    if in_str == '0':
+while True:
+    in_str = input('输入起始站和终点站,换乘意愿(0-5),空格间隔,回车结束：')
+    if in_str == '':
         break
     else:
-        s,e,increment = in_str.split()
-    recommend(s,e,increment=4)
-
+        try:
+            s,e,increment = in_str.split()
+            recommend(s,e,int(increment))
+        except:
+            print('请重新输入')
+print()
 print('感谢使用')

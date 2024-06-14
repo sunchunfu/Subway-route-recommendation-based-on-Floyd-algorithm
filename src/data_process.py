@@ -15,11 +15,13 @@ class cst:
         self.id = id
 
 class cedge:
-    def __init__(self,st_in,st_out,time,length):
+    def __init__(self,st_in,st_out,time,length,ln,color):
         self.st_in = st_in
         self.st_out = st_out
         self.time = time
         self.length = length
+        self.ln = ln
+        self.color = color
 
 sts_list = []
 edges_list = []
@@ -61,7 +63,7 @@ def get_time_dis(path):
         finally:
             pass
     time = time + 30*len(path)/60
-    return dis,time,tr
+    return round(dis,3),round(time,2),tr
 
 
 
@@ -79,8 +81,23 @@ def data_process(data_path):
                     st_dict[stn]['id'])
             sts_list.append(st)
             for outn in st_dict[stn]['c_time'].keys():
-                edge = cedge(stn,outn,st_dict[stn]['c_time'][outn],st_dict[stn]['c_dis'][outn])
+                a = set(st_dict[stn]['ln'])
+                b = set(st_dict[outn]['ln'])
+                ln = list(a&b)[0]
+
+                if ln == '1号线':
+                    color = '#CC0000'
+                elif ln == '2号线':
+                    color = '#0065B3'
+                elif ln == '3号线':
+                    color = '#00AB4F'
+                elif ln == '4号线':
+                    color = '#EE782E'
+                elif ln == '5号线':
+                    color = '#B8D201'
+                edge = cedge(stn,outn,st_dict[stn]['c_time'][outn],st_dict[stn]['c_dis'][outn],ln,color)
                 edges_list.append(edge)
+
 
     #时间矩阵
 

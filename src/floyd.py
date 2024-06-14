@@ -1,7 +1,13 @@
+from draw import *
+import sys
 
-from data_process import *
-from pprint import pprint
-import copy
+def progress_bar(finish_tasks_number, tasks_number):
+
+    percentage = round(finish_tasks_number / tasks_number * 100)
+    print("\r进度: {}%: ".format(percentage), "▓" * (percentage // 2), end="")
+    sys.stdout.flush()
+
+
 
 
 def floyd(D,P):
@@ -11,7 +17,7 @@ def floyd(D,P):
                 if D[i][k] != inf and D[k][j] != inf and D[i][k] + D[k][j] < D[i][j]:
                     D[i][j] = D[i][k] + D[k][j]
                     P[i][j] = k
-    return D,P
+    
 
 def init(data_path):
     global D_is,P_dis,D_time,P_time
@@ -22,6 +28,7 @@ def init(data_path):
     P_time = copy.deepcopy(P_time_base)
     floyd(D_dis,P_dis)
     floyd(D_time,P_time)
+    draw_all(data_path)
 
 def __get_P(s,e,P,list):
     if(P[s][e]==0):
@@ -55,13 +62,14 @@ def plan_by_dis(s,e):
     print('距离:',cost,'km')
 
 def recommend(s,e,increment=5):
-    increment = 5-increment
+    increment = (5-increment)/5
     global P_dis
     global D_dis
     sid = get_id(s)
     eid = get_id(e)
     Paths = []
-    for i in range(10):
+    for i in range(15):
+        progress_bar(i+1,15)
         P = []
         __get_P(sid,eid,P_dis,P)
         if P not in Paths:
@@ -73,15 +81,21 @@ def recommend(s,e,increment=5):
                 D_dis[P[i]][P[i+1]] += increment
         floyd(D_dis,P_dis)
         increment *= 1.1
-
+    print()
     for i in range(len(Paths)):
         path = Paths[i]
+        distance, time, tr_num = get_time_dis(path)
+        html = '路线{}_耗时{}min_距离{}KM_换乘次数{}'.format(i, time, distance, tr_num)
+        print(html)
         path.insert(0,sid)
         path.append(eid)
+        r_path = []
         for st_id in path:
-            print(get_name(st_id),end=' ')
-        print(get_time_dis(path))
-
+            name = get_name(st_id)
+            r_path.append(name)
+            print(name,end=' ')
+        draw_route(r_path,html)
+        print()
 
 if __name__ == '__main__':
     recommend('大学城北','综保区',increment=4)

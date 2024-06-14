@@ -31,7 +31,6 @@ def getDistance(latA, lonA, latB, lonB):
     distance = round(distance / 1000, 4)
     return distance
 
-
 with open('../data/draw.json','r',encoding='utf-8') as f:
     data = json.load(f)  #加载数据文件
     lines = data['l']
