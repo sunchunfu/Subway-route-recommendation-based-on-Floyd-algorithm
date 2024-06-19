@@ -1,7 +1,8 @@
-import pandas as pd
 import json
-from pprint import pprint
 
+#该文件读取数据文件创建算法所需的变量，被draw.py调用
+
+#车站和边的类
 class cst:
     def __init__(self, name, pos_x, pos_y, lon_E, lat_N, c_time, c_dis, ln, id):
         self.name = name
@@ -23,15 +24,17 @@ class cedge:
         self.ln = ln
         self.color = color
 
-sts_list = []
-edges_list = []
-st_dict = {}
-D_time_base = []
+#创建所需变量
+sts_list = []     #车站对象列表
+edges_list = []   #边对象列表
+st_dict = {}      #读取数据的字典
+D_time_base = []  #基于时间的原始矩阵
 P_time_base = []
-D_dis_base = []
+D_dis_base = []   #基于距离的原始矩阵
 P_dis_base = []
 inf = 999999
 
+#从站名获取id
 def get_id(name):
     id = 0
     for st in sts_list:
@@ -40,6 +43,7 @@ def get_id(name):
             break
     return id
 
+#从id获取站名
 def get_name(id):
     name = 0
     for st in sts_list:
@@ -48,7 +52,8 @@ def get_name(id):
             break
     return name
 
-def get_time_dis(path):
+#获取线路序列的耗时，距离与换乘次数
+def get_time_dis_tr(path):
     time = 0
     dis = 0
     tr = 0
@@ -63,11 +68,11 @@ def get_time_dis(path):
         finally:
             pass
     time = time + 30*len(path)/60
-    return round(dis,3),round(time,2),tr
+    return round(time,2),round(dis,3),tr
 
-
-
+#主要数据处理函数
 def data_process(data_path):
+    #打开数据文件形成类
     with open(data_path,'r',encoding='utf-8') as f:
         st_dict = json.load(f)
         for stn in st_dict.keys():
@@ -84,7 +89,6 @@ def data_process(data_path):
                 a = set(st_dict[stn]['ln'])
                 b = set(st_dict[outn]['ln'])
                 ln = list(a&b)[0]
-
                 if ln == '1号线':
                     color = '#CC0000'
                 elif ln == '2号线':
@@ -98,9 +102,7 @@ def data_process(data_path):
                 edge = cedge(stn,outn,st_dict[stn]['c_time'][outn],st_dict[stn]['c_dis'][outn],ln,color)
                 edges_list.append(edge)
 
-
     #时间矩阵
-
     for i in range(len(sts_list)):
         D_temp = []
         P_temp = []
